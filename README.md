@@ -2,6 +2,8 @@
 
 This is a cheap wifi switch controlled by an esp8266. By default it works via two servers located in China. These servers have complete control over the switch so if suspicious I'd recommend firewalling off the plugs.
 
+Example auction for them: http://www.ebay.co.uk/itm/Smart-WiFi-Wireless-Remote-Control-UK-Plug-Socket-Switch-Power-Mobile-Phone-App-/272277763047 (I didn't use this seller)
+
 Firmware servers:
 
 121.42.46.59 port 2110 and 5110. This is the main control host. The protocol between the plug and server is different to that described here, but uses the same AES characteristics.
