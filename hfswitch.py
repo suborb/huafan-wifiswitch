@@ -40,6 +40,15 @@ def getCurrent(host):
     data = sock.recv(1024)
     print decrypt(data, "9521314528002574")
 
+def getVersion(host):
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.connect((host, 7681))
+    msg="P 888888 AT+SV\r\n"
+    tosend=encrypt(msg,"9521314528002574")
+    sock.sendall(tosend)
+    data = sock.recv(1024)
+    print decrypt(data, "9521314528002574")
+
 
 def discover():
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -62,6 +71,8 @@ if sys.argv[1] == "off":
     turnOff(sys.argv[2])
 if sys.argv[1] == "current":
     getCurrent(sys.argv[2])
+if sys.argv[1] == "version":
+    getVersion(sys.argv[2])
 if sys.argv[1] == "discover":
     discover()
 
