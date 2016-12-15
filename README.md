@@ -76,9 +76,13 @@ P 888888 AT+SCURRENTPOWER=1\r\n
 ### Response
 
 ```
-S 000000000000 +SCURRENTPOWER:#1,1,000000,00000
+S 000000000000 +SCURRENTPOWER:#1,1,WWWWWW,AAAAA
 ```
 
 Where 000000000000 is the mac address and the final 2 is the state of the switch.
+
+W is the wattage measured in 0.01W. A is the current in 0.0001A
+
+
 
 
