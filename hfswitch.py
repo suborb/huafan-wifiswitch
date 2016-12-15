@@ -1,9 +1,11 @@
+#!/usr/bin/python
 
 import socket
 from Crypto.Cipher import AES
 import base64
 import sys
 import argparse
+import urllib2
 
 
 def encrypt(message, passphrase):
@@ -35,7 +37,8 @@ def execCommand(host,command):
     tosend=encrypt(msg,"9521314528002574")
     sock.sendall(tosend)
     data = sock.recv(1024)
-    print decrypt(data, "9521314528002574")
+    decrypted = decrypt(data, "9521314528002574")
+    return decrypted
 
 
 
@@ -49,12 +52,24 @@ def discover():
         data, addr = sock.recvfrom(1024)
         print "Probe response: ", data
 
+def postUsageToDomoticz(domoticz_addr, idx, usage):
+    parts = usage.split(',')
+    watts=int(parts[2]) / 100.
+    if domoticz_addr != None and idx != None:
+        urllib2.urlopen(domoticz_addr + "/json.htm?type=command&param=udevice&idx=" + idx + "&nvalue=0&svalue=" + str(watts) + ";" + str(watts)).read()
+    else:
+        print usage
+
+
+
 
 def main():
     parser = argparse.ArgumentParser(description='Control a HuaFan WifiSwitch.')
     parser.add_argument("--host", dest='host', help="Host/address of the switch")
     parser.add_argument("--time", dest='time', help="time to set")
     parser.add_argument("--raw", dest='raw', help="Raw command")
+    parser.add_argument("--domoticz_url", dest='domoticz_url', help="URL for domoticz server")
+    parser.add_argument("--domoticz_idx", dest='domoticz_idx', help="Index for the usage meter in domoticz")
     parser.add_argument("command",  help="Command to run")
 
     args = parser.parse_args()
@@ -74,13 +89,14 @@ def main():
     if args.command =="off":
         execCommand(args.host, "AT+SCLOSE=1")
     if args.command =="current":
-        execCommand(args.host, "AT+SCURRENTPOWER=1")
+        result = execCommand(args.host, "AT+SCURRENTPOWER=1")
+        postUsageToDomoticz(args.domoticz_url, args.domoticz_idx, result)
     if args.command =="version":
-        execCommand(args.host, "AT+SV")
+        print execCommand(args.host, "AT+SV")
     if args.command =="gettime":
         execCommand(args.host, "AT+STIME?")
     if args.command == "getsignal":
-        execCommand(args.host, "AT+SRSSI=1?")
+        print execCommand(args.host, "AT+SRSSI=1?")
 
 
     # Settime is overwritten seemingly
@@ -88,7 +104,7 @@ def main():
         setTime(args.host, args.time)
 
     if args.raw != None and args.command == "raw":
-        execCommand(args.host, args.raw)
+        print execCommand(args.host, args.raw)
 
 
 main()
