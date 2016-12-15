@@ -4,13 +4,15 @@ This is a cheap wifi switch controlled by an esp8266. By default it works via tw
 
 Example auction for them: http://www.ebay.co.uk/itm/Smart-WiFi-Wireless-Remote-Control-UK-Plug-Socket-Switch-Power-Mobile-Phone-App-/272277763047 (I didn't use this seller)
 
-Firmware servers:
+## The script
 
-121.42.46.59 port 2110 and 5110. This is the main control host. The protocol between the plug and server is different to that described here, but uses the same AES characteristics.
+hfswitch.py allows the controlling of a switch and additionally allows usage statistics to me posted back to domoticz. For usage to work, the script should be run periodically.
+
+## Servers the firmware contacts:
+
+121.42.46.59 port 2110 and 5110. This is the main control host. 
 
 iotbucket.com the switch talks to one of the servers under this domain and regularly issues a HTTP ping.
-
-Code will come later, but the information here is enough to control a switch.
 
 
 ## Discovery
