@@ -10,9 +10,9 @@ hfswitch.py allows the controlling of a switch and additionally allows usage sta
 
 ## Servers the firmware contacts:
 
-121.42.46.59 port 2110 and 5110. This is the main control host. 
+121.42.46.59 port 2110 and 5110. This is the main control host. Initially port 5110 is used, and then fails back to 2100. This runs a slightly different protocol to local usage.
 
-iotbucket.com the switch talks to one of the servers under this domain and regularly issues a HTTP ping.
+115.29.202.58 port 8000. The switch talks to one of the servers under this domain and regularly issues a HTTP ping.
 
 
 ## Discovery
@@ -37,11 +37,11 @@ for example:
 HF-W0B,2,192.168.4.1,00-00-00-00-00-00
 ```
 
+
 ## Controlling Protocol
 
 The switch accepts a TCP connection on port 7681. The protocol is fairly simple, but is obfuscated using AES. The encryption key is "9521314528002574" and the IV is "4528453102574529".
 
-There are many commands available, the following are the most useful.
 
 ## Turning the Switch on
 
@@ -86,5 +86,39 @@ Where 000000000000 is the mac address and the final 2 is the state of the switch
 W is the wattage measured in 0.01W. A is the current in 0.0001A
 
 
+## Switching between AP and Client mode
 
+### Switch to standalone mode (AP)
+
+Observed:
+
+```
+P 888888 AT+SAPSTA=1
+```
+
+### Switch to station mode
+
+By inference:
+
+```
+P 888888 AT+SAPSTA=0
+```
+
+## Joining a network
+
+From inspection, the appropriate command is:
+
+```
+P 888888 AT+SSIDINFO=[SSID Length],[SSID],[Auth mode],[password]
+```
+
+Where [Auth mode] is one of the following values:
+
+* AuthModeOpen = 0;
+* AuthModeWPA = 3;
+* AuthModeWPAPSK = 4;
+* AuthModeWPA2 = 6;
+* AuthModeWPA2PSK = 7;
+* AuthModeWPA1WPA2 = 8;
+* AuthModeWPA1PSKWPA2PSK = 9;
 
