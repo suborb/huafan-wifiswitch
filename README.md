@@ -90,15 +90,11 @@ W is the wattage measured in 0.01W. A is the current in 0.0001A
 
 ### Switch to standalone mode (AP)
 
-Observed:
-
 ```
 P 888888 AT+SAPSTA=1
 ```
 
 ### Switch to station mode
-
-By inference:
 
 ```
 P 888888 AT+SAPSTA=0
@@ -109,7 +105,7 @@ P 888888 AT+SAPSTA=0
 From inspection, the appropriate command is:
 
 ```
-P 888888 AT+SSIDINFO=[SSID Length],[SSID],[Auth mode],[password]
+P 888888 AT+SSSIDINFO=[SSID Length],[SSID],[Auth mode],[password]
 ```
 
 Where [Auth mode] is one of the following values:
@@ -122,3 +118,10 @@ Where [Auth mode] is one of the following values:
 * AuthModeWPA1WPA2 = 8;
 * AuthModeWPA1PSKWPA2PSK = 9;
 
+Response is:
+
+```
+S 000000000000 +SSSIDINFO:OK
+```
+
+Where 000000000000 is the mac address of the switch.
