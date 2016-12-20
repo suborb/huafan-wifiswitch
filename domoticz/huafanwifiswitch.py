@@ -12,11 +12,13 @@ import Domoticz
 from Crypto.Cipher import AES
 import base64
 
+isConnected = False
+
+
 def onStart():
-    # TODO: Work out the right value for these switches, they are wrong
     if (len(Devices) == 0):
-        Domoticz.Device(Name="Status",  Unit=1, Type=244,  Switchtype=73).Create()
-        Domoticz.Device(Name="Usage", Unit=2, Type=243, Subtype=29, Switchtype=0, Image=0, Options="").Create()
+        Domoticz.Device(Name="Status",  Unit=1, Type=244,  Subtype=73, Switchtype=0).Create()
+        Domoticz.Device(Name="Usage", Unit=2, Type=248, Subtype=1, Switchtype=0, Image=0, Options="").Create()
 
     Domoticz.Transport("TCP/IP", Parameters["Address"], "7681")
     Domoticz.Protocol("line")
@@ -24,8 +26,13 @@ def onStart():
     return True
 
 def onConnect(Status, Description):
+    global isConnected
     if (Status == 0):
-        print("Connected")
+        isConnected = True
+        Domoticz.Log("Connected successfully to: " + Parameters["Address"])
+    else:
+        isConnected = False
+        Domoticz.Log("Failed to connect to: " + Parameters["Address"])
 
     return True
 
@@ -42,6 +49,10 @@ def onMessage(Data):
                 UpdateDevice(1, 1, '')
             if result == '2':
                 UpdateDevice(1, 0, '')
+        elif parts[2].startswith("+SCURRENTPOWER") == True:
+            parts2 = parts[2].split(',')
+            watts=int(parts2[2]) / 100.
+            UpdateDevice(2, 0,str(watts))
         else:
             print(decrypted)
     return True
@@ -55,7 +66,6 @@ def onCommand(Unit, Command, Level, Hue):
         execCommand("AT+SOPEN=1")
     if action == 'Off':
         execCommand("AT+SCLOSE=1")
-
    
     return True
 
@@ -64,12 +74,12 @@ def onNotification(Data):
     return
 
 def onHeartbeat():
-    print("Heartbeat")
     execCommand("AT+SCURRENTPOWER=1")
     return True
 
 def onDisconnect():
-    print("Disconnected")
+    global isConnected
+    isconnected = False
     return
    
 
