@@ -30,6 +30,7 @@ def onConnect(Status, Description):
     if (Status == 0):
         isConnected = True
         Domoticz.Log("Connected successfully to: " + Parameters["Address"])
+        execCommand("AT+SCURRENTPOWER=1")
     else:
         isConnected = False
         Domoticz.Log("Failed to connect to: " + Parameters["Address"])
@@ -52,7 +53,13 @@ def onMessage(Data):
         elif parts[2].startswith("+SCURRENTPOWER") == True:
             parts2 = parts[2].split(',')
             watts=int(parts2[2]) / 100.
+            #Domoticz.Log("Power update for " + Parameters["Address"] + " is " + str(watts))
             UpdateDevice(2, 0,str(watts))
+            # Update the status based on this message
+            if parts2[1] == '1':
+                UpdateDevice(1, 1, '')
+            elif parts2[1] == '2':
+                UpdateDevice(1, 0, '')
         else:
             print(decrypted)
     return True
