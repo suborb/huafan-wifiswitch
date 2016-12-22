@@ -41,7 +41,7 @@ def onMessage(Data):
     decrypted = decrypt(Data, "9521314528002574")
     decrypted = str(decrypted,'utf-8')
     parts = decrypted.split()
-
+    #Domoticz.Log("Received " + decrypted)
     if parts[0] == 'S':
         if parts[2].startswith("+SNODE") == True:
             index = parts[2].index(",")
@@ -81,7 +81,11 @@ def onNotification(Data):
     return
 
 def onHeartbeat():
-    execCommand("AT+SCURRENTPOWER=1")
+    if isConnected == False:
+        Domoticz.Log("Attempting to reconnect");
+        Domoticz.Connect()
+    else:
+        execCommand("AT+SCURRENTPOWER=1")
     return True
 
 def onDisconnect():
@@ -116,7 +120,7 @@ def execCommand(cmd):
 def UpdateDevice(Unit, nValue, sValue):
     # Make sure that the Domoticz device still exists (they can be deleted) before updating it 
     if (Unit in Devices):
-        if (Devices[Unit].nValue != nValue) or (Devices[Unit].sValue != sValue):
+        if (Unit == 2) or (Devices[Unit].nValue != nValue) or (Devices[Unit].sValue != sValue):
             Devices[Unit].Update(nValue, str(sValue))
             Domoticz.Log("Update "+str(nValue)+":'"+str(sValue)+"' ("+Devices[Unit].Name+")")
     return
