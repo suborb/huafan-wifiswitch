@@ -41,7 +41,7 @@ def onMessage(Data):
     decrypted = decrypt(Data, "9521314528002574")
     decrypted = str(decrypted,'utf-8')
     parts = decrypted.split()
-    #Domoticz.Log("Received " + decrypted)
+#    Domoticz.Log("Received " + decrypted)
     if parts[0] == 'S':
         if parts[2].startswith("+SNODE") == True:
             index = parts[2].index(",")
@@ -91,6 +91,7 @@ def onHeartbeat():
 def onDisconnect():
     global isConnected
     isconnected = False
+    Domoticz.Connect()
     return
    
 
